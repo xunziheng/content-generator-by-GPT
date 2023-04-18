@@ -13,6 +13,7 @@ export class ChatGPTService {
   }
 
   public async sendMessage(message: string): Promise<any> {
+    console.log('message', message);
     const response = await this.openai.createCompletion({
       model: 'text-davinci-003',
       prompt: message,
@@ -23,6 +24,7 @@ export class ChatGPTService {
       presence_penalty: 0.0,
       stop: ['\n'],
     });
+    console.log('res', response);
     return response;
   }
 }
