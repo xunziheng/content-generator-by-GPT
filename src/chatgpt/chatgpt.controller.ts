@@ -10,6 +10,6 @@ export class ChatGPTController {
     @Body() body: { message: string },
   ): Promise<{ response: string }> {
     const response = await this.chatGPTService.sendMessage(body.message);
-    return { response };
+    return response;
   }
 }

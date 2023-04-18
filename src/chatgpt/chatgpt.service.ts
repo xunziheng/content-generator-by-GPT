@@ -1,32 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import axios, { AxiosRequestConfig } from 'axios';
+import { Configuration, OpenAIApi } from 'openai';
 
 @Injectable()
 export class ChatGPTService {
-  private readonly endpoint: string = 'https://api.openai.com/v1';
-  private readonly apiKey: string =
-    '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';
+  private openai: OpenAIApi;
 
-  public async sendMessage(message: string): Promise<string> {
-    const requestConfig: AxiosRequestConfig = {
-      method: 'POST',
-      url: `${this.endpoint}/engines/davinci-codex/completions`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-      },
-      data: {
-        prompt: message,
-        max_tokens: 1024,
-        temperature: 0.5,
-        top_p: 1,
-        n: 1,
-        stream: false,
-        stop: '\n',
-      },
-    };
+  constructor() {
+    const configuration = new Configuration({
+      apiKey: process.env.CHATGPT_API_KEY,
+    });
+    this.openai = new OpenAIApi(configuration);
+  }
 
-    const response = await axios.request(requestConfig);
-    return response.data.choices[0].text;
+  public async sendMessage(message: string): Promise<any> {
+    const response = await this.openai.createCompletion({
+      model: 'text-davinci-003',
+      prompt: message,
+      temperature: 0,
+      max_tokens: 100,
+      top_p: 1,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+      stop: ['\n'],
+    });
+    return response;
   }
 }
